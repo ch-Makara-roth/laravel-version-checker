@@ -10,18 +10,18 @@ class CheckLaravelVersionCommand extends Command
     protected $signature = 'laravel:check-version';
     protected $description = 'Check for new Laravel framework releases and send Telegram notification';
 
-    protected $versionChecker;
+    protected $VersionChecker;
 
-    public function __construct(LaravelVersionChecker $versionChecker)
+    public function __construct(LaravelVersionChecker $VersionChecker)
     {
         parent::__construct();
-        $this->versionChecker = $versionChecker;
+        $this->VersionChecker = $VersionChecker;
     }
 
     public function handle()
     {
         $this->info('Checking for Laravel updates...');
-        $this->versionChecker->checkForUpdate();
+        $this->VersionChecker->checkForUpdate();
         $this->info('Version check completed.');
     }
 }
