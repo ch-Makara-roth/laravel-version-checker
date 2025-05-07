@@ -7,7 +7,7 @@ A Laravel package to check for new Laravel framework releases and notify via Tel
 1. Install the package via Composer:
 
    ```bash
-   composer require your-vendor/laravel-version-checker
+   composer require version-checker/laravel-version-checker
    ```
 
 2. Publish the configuration file:
