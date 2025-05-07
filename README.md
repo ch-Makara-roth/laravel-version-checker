@@ -1,6 +1,6 @@
 # Laravel Version Checker
 
-A Laravel package to check for new Laravel framework releases and notify via Telegram, including PHP version and extension compatibility checks.
+A Laravel package to check for new Laravel framework releases, verify PHP version and extension compatibility, and notify via Telegram. It also ensures the server’s PHP extensions are sufficient for the project’s Laravel version.
 
 ## Installation
 
@@ -41,6 +41,13 @@ A Laravel package to check for new Laravel framework releases and notify via Tel
 ```bash
 php artisan laravel:check-version
 ```
+
+The command checks:
+- The latest Laravel release via GitHub API.
+- The project’s installed Laravel version (from `composer.json`).
+- PHP version compatibility with the latest Laravel version.
+- Whether the server’s PHP extensions are sufficient (all required extensions are enabled).
+- Sends a Telegram notification with a detailed compatibility report, including installation suggestions for missing extensions.
 
 The command is scheduled to run daily by default (configurable via `VERSION_CHECKER_SCHEDULE_CRON`).
 

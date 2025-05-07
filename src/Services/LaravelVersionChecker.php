@@ -6,6 +6,7 @@ use Telegram\Bot\Laravel\Facades\Telegram;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 
 class LaravelVersionChecker
 {
@@ -89,6 +90,7 @@ class LaravelVersionChecker
         $requiredExtensions = [];
         $missingExtensions = [];
         $phpCompatible = false;
+        $projectLaravelVersion = $this->getProjectLaravelVersion();
 
         // Find matching requirements
         foreach ($this->requirements as $laravelPattern => $reqs) {
@@ -108,19 +110,49 @@ class LaravelVersionChecker
         }
 
         // Build compatibility message
-        $message = "*PHP Compatibility*\n" .
+        $message = "*Project Laravel Version*\n" .
+                   "Current Project: {$projectLaravelVersion}\n" .
+                   "Latest Available: {$version}\n\n";
+
+        $message .= "*PHP Compatibility*\n" .
                    "Current PHP: {$currentPhpVersion}\n" .
                    "Required PHP: {$minPhpVersion}\n" .
                    "PHP Compatible: " . ($phpCompatible ? '✅ Yes' : '❌ No') . "\n\n";
 
         $message .= "*Required Extensions*\n";
         if (empty($missingExtensions)) {
-            $message .= "All required extensions are enabled ✅\n";
+            $message .= "All required extensions are enabled ✅\n" .
+                       "Server extensions are sufficient for Laravel {$version}\n";
         } else {
-            $message .= "Missing extensions: " . implode(', ', $missingExtensions) . " ❌\n";
-            $message .= "Enabled extensions: " . implode(', ', array_diff($requiredExtensions, $missingExtensions)) . "\n";
+            $message .= "Missing extensions: " . implode(', ', $missingExtensions) . " ❌\n" .
+                       "Enabled extensions: " . implode(', ', array_diff($requiredExtensions, $missingExtensions)) . "\n" .
+                       "Server extensions are NOT sufficient for Laravel {$version}\n\n" .
+                       "*Installation Suggestions (Ubuntu/Debian)*\n";
+            foreach ($missingExtensions as $extension) {
+                $message .= "- Install php-$extension: `sudo apt-get install php-$extension`\n";
+            }
         }
 
         return $message;
+    }
+
+    /**
+     * Get the project's installed Laravel version from composer.json
+     */
+    protected function getProjectLaravelVersion()
+    {
+        try {
+            $composerJsonPath = base_path('composer.json');
+            if (File::exists($composerJsonPath)) {
+                $composerData = json_decode(File::get($composerJsonPath), true);
+                $require = $composerData['require'] ?? [];
+                $laravelVersion = $require['laravel/framework'] ?? 'Unknown';
+                return str_replace('^', '', $laravelVersion); // Clean version constraint
+            }
+            return 'Unknown';
+        } catch (\Exception $e) {
+            Log::error('Error reading composer.json: ' . $e->getMessage());
+            return 'Unknown';
+        }
     }
 }

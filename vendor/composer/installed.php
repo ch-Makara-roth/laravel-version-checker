@@ -3,7 +3,7 @@
         'name' => 'version-checker/laravel-version-checker',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '1e4483f43c78cb3bb16ca6ac25de360e3083ca6e',
+        'reference' => 'd764faf38dbad479f62fc926383c5a7f5a7b1a03',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -298,7 +298,7 @@
         'version-checker/laravel-version-checker' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '1e4483f43c78cb3bb16ca6ac25de360e3083ca6e',
+            'reference' => 'd764faf38dbad479f62fc926383c5a7f5a7b1a03',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
