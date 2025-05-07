@@ -1,6 +1,6 @@
 <?php
 
-namespace YourVendor\LaravelVersionChecker\Services;
+namespace VersionChecker\LaravelVersionChecker\Services;
 
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Illuminate\Support\Facades\Http;
