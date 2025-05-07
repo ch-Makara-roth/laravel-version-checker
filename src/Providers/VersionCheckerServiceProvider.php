@@ -1,10 +1,10 @@
 <?php
 
-namespace YourVendor\LaravelVersionChecker\Providers;
+namespace VersionChecker\LaravelVersionChecker\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use YourVendor\LaravelVersionChecker\Services\LaravelVersionChecker;
-use YourVendor\LaravelVersionChecker\Console\Commands\CheckLaravelVersionCommand;
+use VersionChecker\LaravelVersionChecker\Services\LaravelVersionChecker;
+use VersionChecker\LaravelVersionChecker\Console\Commands\CheckLaravelVersionCommand;
 
 class VersionCheckerServiceProvider extends ServiceProvider
 {

@@ -17,13 +17,13 @@
     },
     "autoload": {
         "psr-4": {
-            "versionChecker\\LaravelVersionChecker\\": "src/"
+            "VersionChecker\\LaravelVersionChecker\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "versionChecker\\LaravelVersionChecker\\Providers\\VersionCheckerServiceProvider"
+                "VersionChecker\\LaravelVersionChecker\\Providers\\VersionCheckerServiceProvider"
             ]
         }
     },

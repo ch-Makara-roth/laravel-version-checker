@@ -24,7 +24,10 @@ class ComposerStaticInit638de5d91d52ccd2cf5cfa36efea513a
         'v' => 
         array (
             'voku\\' => 5,
-            'versionChecker\\LaravelVersionChecker\\' => 37,
+        ),
+        'V' => 
+        array (
+            'VersionChecker\\LaravelVersionChecker\\' => 37,
         ),
         'T' => 
         array (
@@ -78,7 +81,7 @@ class ComposerStaticInit638de5d91d52ccd2cf5cfa36efea513a
         array (
             0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
         ),
-        'versionChecker\\LaravelVersionChecker\\' => 
+        'VersionChecker\\LaravelVersionChecker\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
