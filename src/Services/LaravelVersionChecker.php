@@ -20,6 +20,10 @@ class LaravelVersionChecker
         $this->telegramChatId = config('version-checker.telegram.chat_id');
         $this->githubApiUrl = config('version-checker.github.api_url');
         $this->requirements = config('version-checker.requirements');
+        Log::debug('LaravelVersionChecker initialized', [
+            'telegram_chat_id' => $this->telegramChatId,
+            'github_api_url' => $this->githubApiUrl
+        ]);
     }
 
     /**
@@ -29,17 +33,23 @@ class LaravelVersionChecker
     {
         try {
             // Get the latest release from GitHub
+            Log::debug('Fetching latest Laravel release from GitHub');
             $response = Http::withHeaders([
                 'Accept' => 'application/vnd.github.v3+json',
                 'Authorization' => 'Bearer ' . config('version-checker.github.token'),
             ])->get($this->githubApiUrl);
 
             if ($response->failed()) {
-                Log::error('Failed to fetch Laravel releases: ' . $response->status());
+                Log::error('Failed to fetch Laravel releases', [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                ]);
                 return;
             }
 
             $release = $response->json();
+            Log::debug('GitHub API response', ['release' => $release]);
+
             $latestVersion = $release['tag_name'] ?? null;
 
             if (!$latestVersion) {
@@ -49,13 +59,19 @@ class LaravelVersionChecker
 
             // Clean version string (remove 'v' prefix if present)
             $latestVersion = ltrim($latestVersion, 'v');
+            Log::debug('Processed latest version', ['version' => $latestVersion]);
 
             // Check if this is a new version
             $cachedVersion = Cache::get($this->cacheKey);
+            Log::debug('Cache check', [
+                'cached_version' => $cachedVersion,
+                'latest_version' => $latestVersion
+            ]);
 
             if ($cachedVersion !== $latestVersion) {
                 // Store new version in cache
                 Cache::put($this->cacheKey, $latestVersion, now()->addDays(7));
+                Log::debug('Cached new version', ['version' => $latestVersion]);
 
                 // Check compatibility
                 $compatibilityMessage = $this->checkCompatibility($latestVersion);
@@ -67,16 +83,31 @@ class LaravelVersionChecker
                           $compatibilityMessage;
 
                 // Send Telegram notification
-                Telegram::sendMessage([
+                Log::debug('Sending Telegram notification', [
                     'chat_id' => $this->telegramChatId,
-                    'text' => $message,
-                    'parse_mode' => 'Markdown',
+                    'message' => $message
                 ]);
-
-                Log::info("New Laravel version {$latestVersion} detected and notification sent");
+                try {
+                    Telegram::sendMessage([
+                        'chat_id' => $this->telegramChatId,
+                        'text' => $message,
+                        'parse_mode' => 'Markdown',
+                    ]);
+                    Log::info("Telegram notification sent for Laravel version {$latestVersion}");
+                } catch (\Exception $e) {
+                    Log::error('Failed to send Telegram notification', [
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            } else {
+                Log::info('No new Laravel version detected', [
+                    'cached_version' => $cachedVersion
+                ]);
             }
         } catch (\Exception $e) {
-            Log::error('Error checking Laravel version: ' . $e->getMessage());
+            Log::error('Error checking Laravel version', [
+                'error' => $e->getMessage()
+            ]);
         }
     }
 
@@ -133,6 +164,7 @@ class LaravelVersionChecker
             }
         }
 
+        Log::debug('Compatibility check result', ['message' => $message]);
         return $message;
     }
 
@@ -147,11 +179,14 @@ class LaravelVersionChecker
                 $composerData = json_decode(File::get($composerJsonPath), true);
                 $require = $composerData['require'] ?? [];
                 $laravelVersion = $require['laravel/framework'] ?? 'Unknown';
-                return str_replace('^', '', $laravelVersion); // Clean version constraint
+                $cleanVersion = str_replace('^', '', $laravelVersion);
+                Log::debug('Project Laravel version', ['version' => $cleanVersion]);
+                return $cleanVersion;
             }
+            Log::warning('composer.json not found');
             return 'Unknown';
         } catch (\Exception $e) {
-            Log::error('Error reading composer.json: ' . $e->getMessage());
+            Log::error('Error reading composer.json', ['error' => $e->getMessage()]);
             return 'Unknown';
         }
     }
