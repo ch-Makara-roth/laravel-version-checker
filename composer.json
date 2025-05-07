@@ -1,0 +1,32 @@
+{
+    "name": "version-checker/laravel-version-checker",
+    "description": "A Laravel package to check for framework updates and notify via Telegram",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Makara",
+            "email": "chhuonmakararoth@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "irazasyed/telegram-bot-sdk": "^3.0",
+        "guzzlehttp/guzzle": "^7.0",
+        "illuminate/support": "^9.0|^10.0|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "versionChecker\\LaravelVersionChecker\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "versionChecker\\LaravelVersionChecker\\Providers\\VersionCheckerServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
